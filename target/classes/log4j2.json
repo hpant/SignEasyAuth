@@ -1,0 +1,86 @@
+{
+  "configuration": {
+    "name": "signeasy",
+    "properties": {
+      "property": [
+        {
+          "name": "log-path",
+          "value": "/home/ubuntu/apps/signeasy/logs"
+        },
+        {
+          "name": "archive",
+          "value": "${log-path}/archive"
+        },
+        {
+          "name": "pattern",
+          "value": "%X{requestId} - [%-5level] %d{yyyy-MM-dd'T'HH:mm:ss.SSS'Z'} [%t] %c{1} - %msg%ex%n"
+        },
+        {
+          "name": "jsonPattern",
+          "value": "{\"requestId\" : \"%X{requestId}\",\"level\" : \"%-5level\",\"time\" : \"%d{yyyy-MM-dd'T'HH:mm:ss.SSS'Z'}\",\"thread\" : \"%t\",\"class\" : \"%c{1}\",\"message\" : \"%msg\", \"ex-message\" : \"%ex{short.message}\", \"ex-class\" : \"%ex{short.className}\", \"ex\" : \"%ex\"}%n"
+        }
+      ]
+    },
+    "appenders": {
+      "Console": {
+        "name": "Console-Appender",
+        "target": "SYSTEM_OUT",
+        "PatternLayout": {
+          "pattern": "${pattern}"
+        }
+      },
+      "RollingFile": {
+        "name": "RollingLogFile-Appender",
+        "fileName": "${log-path}/application.log",
+        "filePattern": "${log-path}/application.log.%d{dd-MM-yy-hh}.gz",
+        "PatternLayout": {
+          "pattern": "${jsonPattern}"
+        },
+        "Policies": {
+          "SizeBasedTriggeringPolicy": {
+            "size": "500 MB"
+          },
+          "TimeBasedTriggeringPolicy": {
+            "interval": "24",
+            "modulate": "true"
+          }
+        },
+        "DefaultRolloverStrategy": {
+          "max": "30"
+        }
+      }
+    },
+    "loggers": {
+      "logger": [
+        {
+          "name": "com.signeasy",
+          "level": "info",
+          "additivity": "false",
+          "appender-ref": [
+            {
+              "ref": "RollingLogFile-Appender",
+              "level": "info"
+            },
+            {
+              "ref": "Console-Appender",
+              "level": "info"
+            }
+          ]
+        }
+      ],
+      "root": {
+        "level": "info",
+        "appender-ref": [
+          {
+            "ref": "RollingLogFile-Appender",
+            "level": "info"
+          },
+          {
+            "ref": "Console-Appender",
+            "level": "info"
+          }
+        ]
+      }
+    }
+  }
+}
